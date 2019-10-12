@@ -46,9 +46,23 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
       return res.status(400)
         .send(`image_url is required`);
     }
+    var userDetails;
+    var initializePromise = filterImageFromURL(image_url);
+    initializePromise.then(function(result) {
+        userDetails = result;
+        console.log("Initialized user details");
+        // Use user details from here
+        console.log(userDetails)
+        return res.status(200)
+        .send("image downloaded");
+    }, function(err) {
+        console.log(err);
+        return res.status(401)
+        .send("image not downloaded");
+    })
 
-    return res.status(200)
-      .send(`Welcome to the Cloud, ${image_url}!`);
+    
+
   });
 
   // Start the Server
