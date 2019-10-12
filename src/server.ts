@@ -54,7 +54,8 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
         // Use user details from here
         console.log(userDetails)
         return res.status(200)
-        .send("image downloaded");
+        .sendFile(userDetails);
+
     }, function(err) {
         console.log(err);
         return res.status(401)
