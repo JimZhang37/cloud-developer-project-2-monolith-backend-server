@@ -1,6 +1,7 @@
 import express, { Router, Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import fs from 'fs';
+import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
 (async () => {
 
@@ -9,7 +10,7 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
 
   // Set the network port
   const port = process.env.PORT || 8082;
-  
+
   // Use the body parser middleware for post requests
   app.use(bodyParser.json());
 
@@ -30,13 +31,13 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   //! END @TODO1
-  
+
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
+  app.get("/", async (req, res) => {
     res.send("try GET /filteredimage?image_url={{}}")
-  } );
-  
+  });
+
   // Get a greeting to a specific person to demonstrate req.query
   // > try it {{host}}/persons?name=the_name
   app.get("/filteredimage/", (req: Request, res: Response) => {
@@ -48,27 +49,39 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     }
     var userDetails;
     var initializePromise = filterImageFromURL(image_url);
-    initializePromise.then(function(result) {
-        userDetails = result;
-        console.log("Initialized user details");
-        // Use user details from here
-        console.log(userDetails)
-        return res.status(200)
-        .sendFile(userDetails);
+    initializePromise.then(function (result) {
+      userDetails = result;
+      console.log("Initialized user details");
+      // Use user details from here 
+      console.log(userDetails)
+      res.status(200).sendFile(userDetails);
+      //delete files in a foler
+      var filenames = fs.readdirSync(__dirname + '/util/tmp/');
 
-    }, function(err) {
-        console.log(err);
-        return res.status(401)
+      if (filenames.length > 0)
+        for (var i = 0; i < filenames.length; i++) {
+          filenames[i] = __dirname + '/util/tmp/' + filenames[i];
+
+        }
+
+      console.log("on the end of response, delete files in the folder");
+      console.log(filenames);
+      //deleteLocalFiles(filenames);
+      return;
+    }, function (err) {
+      
+      console.log(err);
+      return res.status(401)
         .send("image not downloaded");
     })
 
-    
+
 
   });
 
   // Start the Server
-  app.listen( port, () => {
-      console.log( `server running http://localhost:${ port }` );
-      console.log( `press CTRL+C to stop server` );
-  } );
+  app.listen(port, () => {
+    console.log(`server running http://localhost:${port}`);
+    console.log(`press CTRL+C to stop server`);
+  });
 })();
