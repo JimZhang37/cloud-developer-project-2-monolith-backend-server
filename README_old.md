@@ -1,7 +1,5 @@
 # Udagram Image Filtering Microservice
 
-This is the second project in Udacity Cloud Developer Nanodegree. A monolith backend server is deployed in AWS elastic beanstalk, RDS and S3.
-
 Udagram is a simple cloud application developed alongside the Udacity Cloud Engineering Nanodegree. It allows users to register and log into a web client, post photos to the feed, and process photos using an image filtering microservice.
 
 The project is split into three parts:
